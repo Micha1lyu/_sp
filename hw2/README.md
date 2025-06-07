@@ -1,6 +1,6 @@
 #  asmPower2
 
-```
+``` 
 $ ./test.sh
 ++ gcc -w c4.c -o c4
 ++ ./c4

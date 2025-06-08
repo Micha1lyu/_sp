@@ -33,7 +33,7 @@ int *e, *le,  // current position in emitted code (e: 目前機器碼指標, le:
 // tokens and classes (operators last and in precedence order) (按優先權順序排列)
 enum { // token : 0-127 直接用該字母表達， 128 以後用代號。
   Num = 128, Fun, Sys, Glo, Loc, Id,
-  Char, Else, Enum, If, Int, Return, Sizeof, For, Do, While,
+  Char, Else, Enum, If, Int, Return, Sizeof, For, Do, While, 
   Assign, Cond, Lor, Lan, Or, Xor, And, Eq, Ne, Lt, Gt, Le, Ge, Shl, Shr, Add, Sub, Mul, Div, Mod, Inc, Dec, Brak
 };
 // opcodes (機器碼的 op)
@@ -59,10 +59,10 @@ void next() // 詞彙解析 lexer
         printf("%d: %.*s", line, p - lp, lp); // 印出該行
         lp = p; // lp = p = 新一行的原始碼開頭
         while (le < e) { // 印出上一行的所有目的碼
-          printf("  %d: %8.4s", le+1, &"LLA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
+          printf("  %lld: %8.4s", le, &"LLA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
                            "OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,"
                            "OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT,"[*++le * 5]);
-          if (*le <= ADJ) printf("%d\n", *++le); else printf("\n"); // LLA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ 有一個參數。
+          if (*le <= ADJ) printf("%lld\n", *++le); else printf("\n"); // LLA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ 有一個參數。
         }
       }
       ++line;
@@ -311,16 +311,20 @@ void stmt() // 陳述 statement
     }
     *b = (int)(e + 1);
   }
-  else if(tk == Do) { // do stmt while (exp);
+  else if (tk == Do) {//DoWhile
     next();
-    a = e + 1; // a 記住 stmt 開頭
-    stmt();
-    if (tk == While) next(); else { printf("%d: while expected\n", line); exit(-1); }
+    a = e + 1;
+    stmt();//先執行一次
+    // if (tk == While) next(); else { printf("%d: While expected\n", line); exit(-1); }
+    next();
     if (tk == '(') next(); else { printf("%d: open paren expected\n", line); exit(-1); }
     expr(Assign);
     if (tk == ')') next(); else { printf("%d: close paren expected\n", line); exit(-1); }
     if (tk == ';') next(); else { printf("%d: semicolon expected\n", line); exit(-1); }
-    *++e = BNZ; *++e = (int)a; // 條件為真時跳回 stmt 開頭
+    *++e = BZ; b = ++e;
+    
+    *++e = JMP; *++e = (int)a;
+    *b = (int)(e + 1);
   }
   else if (tk == While) { // while 語句
     next();

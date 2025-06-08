@@ -36,7 +36,7 @@
     ADJ  1
     PSH 
     LLA  2
-    LI  
+    LI   
     PSH 
     IMM  2
     SUB 

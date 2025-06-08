@@ -10,6 +10,10 @@
 
 [HW2](https://github.com/Micha1lyu/_sp/tree/main/hw2)
 
+## 作業3
+
+[HW3](https://github.com/Micha1lyu/_sp/tree/main/hw3)
+
 ## 作業4
 
 [HW4](https://github.com/Micha1lyu/_sp/tree/main/hw4)
